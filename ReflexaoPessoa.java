@@ -1,4 +1,4 @@
-
+import java.util.Objects;
 import java.lang.reflect.*;
 import javax.swing.JOptionPane;
 
@@ -60,8 +60,8 @@ public class ReflexaoPessoa {
          
             cls = Class.forName(nomeClasse);
 
-            Constructor<?> ct = cls.getConstructor(null);
-			Object retobj = ct.newInstance(null);   
+            Constructor<?> ct = cls.getConstructor();
+			Object retobj = ct.newInstance();   
 
             
             ReflexaoPessoa.setObjectName(retobj, nome);
