@@ -5,19 +5,21 @@ import javax.swing.JOptionPane;
 public class ReflexaoPessoa { 
 
     public static void setObjectName(Object obj, String nome) {
-        if (obj == null) {
+        if (Objects.isNull(obj)){
             throw new IllegalArgumentException("O objeto (obj) não pode ser nulo.");
         }
 
-        Class<?> cls = obj.getClass();
+        Class<? extends Object> cls = obj.getClass();
 
         try {
     
-            Method method = cls.getMethod("setNome", String.class);
-            
-            method.invoke(obj, nome);
+            Method method = cls.getMethod("setNome",
+					new Class[] { String.class });
 
-        } catch (NoSuchMethodException ex) {
+			method.invoke(obj, new Object[] { nome });
+        }
+
+         catch (NoSuchMethodException ex) {
             throw new IllegalArgumentException(cls.getName() + " não suporta o método setNome(String)");
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException("Permissões de acesso insuficientes para executar setNome(String) na classe " + cls.getName());
@@ -28,8 +30,9 @@ public class ReflexaoPessoa {
 
     
     public static String getObjectName(Object obj) {
-        Class<?> cls = obj.getClass();
-        String ret = "";
+        Class<? extends Object> cls = obj.getClass();
+        String ret;
+		ret = "";
 
         try {
           
@@ -48,30 +51,33 @@ public class ReflexaoPessoa {
     }
 
     public static void main(String[] args) {
+        Class<?> cls;
+		String nomeClasse;
         try {
-            String nomeClasse = JOptionPane.showInputDialog(null, "Digite o nome da classe (Pai, Filho ou Avo)");
-            
-          
+            nomeClasse = JOptionPane.showInputDialog(null, "Digite o nome da classe (Pai, Filho ou Avo)");
             String nome = JOptionPane.showInputDialog(null, "Digite o nome da pessoa");
 
          
-            Class<?> cls = Class.forName(nomeClasse);
+            cls = Class.forName(nomeClasse);
 
-            Constructor<?> ct = cls.getConstructor(); 
-            Object retobj = ct.newInstance();       
+            Constructor<?> ct = cls.getConstructor(null);
+			Object retobj = ct.newInstance(null);   
 
             
             ReflexaoPessoa.setObjectName(retobj, nome);
 
-            
-            String nomeObtido = ReflexaoPessoa.getObjectName(retobj);
-            System.out.println("Classe: " + cls.getName() + " | Nome: " + nomeObtido);
+            System.out.println("Classe:"+cls.getName()+" Nome:="+ ReflexaoPessoa.getObjectName(retobj));
+           
 
         } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(null, "Erro: A classe '" + e.getMessage() + "' não foi encontrada.", "Erro de Classe", JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Ocorreu um erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+        } catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+        } catch (Exception e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }
